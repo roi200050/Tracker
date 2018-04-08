@@ -1,0 +1,10 @@
+/.idea
+/MongoDB
+/node_modules
+/node_modules2
+*.txt
+*.log
+*.exe
+good-command.bat
+StartDB.bat
+RoiPlatform.bat

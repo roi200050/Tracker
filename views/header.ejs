@@ -1,0 +1,51 @@
+﻿<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel='stylesheet' href='javascripts/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href='/stylesheets/graph.css' />
+    <script src="javascripts/angular.min.js"></script>
+    <script src="javascripts/angular/app.js"></script>
+    <script src="javascripts/angular/controllers/ngHomeController.js"></script>
+    <script src="javascripts/angular/services/ngDataService.js"></script>
+    <script src="javascripts/d3.min.js"></script>
+    <script src="javascripts/ohlcHandler.js"></script>
+    <script src="javascripts/jquery/jquery.min.js"></script>
+    <script src="javascripts/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <div class="navbar navbar-default navbar-fixed-top hidden" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="btn btn-success navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </button>
+                <div id="logo">
+                    <a href='/'>
+                        <h4>The Board</h4>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav">
+                        <a href="/">Home</a>
+                    </li>
+                    <li class="nav">
+                        <a href="/Graph">Graph</a>
+                    </li>
+                    <li class="nav">
+                        <a href="/Table">Table</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-default" aria-label="Sell">
+            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default" aria-label="Buy">
+            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+        </button>
+    </div>
+</head>

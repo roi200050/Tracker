@@ -1,0 +1,412 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+text.symbol {
+    fill: #BBBBBB;
+}
+
+path.candle {
+    stroke: #000000;
+}
+
+path.candle.body {
+    stroke-width: 0;
+}
+
+path.candle.up {
+    fill: #00AA00;
+    stroke: #00AA00;
+}
+
+path.candle.down {
+    fill: #FF0000;
+    stroke: #FF0000;
+}
+
+.close.annotation.up path {
+    fill: #00AA00;
+}
+
+path.volume {
+    fill: #DDDDDD;
+}
+
+.indicator-plot path.line {
+    fill: none;
+    stroke-width: 1;
+}
+
+.ma-0 path.line {
+    stroke: #1f77b4;
+}
+
+.ma-1 path.line {
+    stroke: #aec7e8;
+}
+
+.ma-2 path.line {
+    stroke: #ff7f0e;
+}
+
+path.macd {
+    stroke: #0000AA;
+}
+
+path.signal {
+    stroke: #FF9999;
+}
+
+path.zero {
+    stroke: #BBBBBB;
+    stroke-dasharray: 0;
+    stroke-opacity: 0.5;
+}
+
+path.difference {
+    fill: #BBBBBB;
+    opacity: 0.5;
+}
+
+path.rsi {
+    stroke: #000000;
+}
+
+path.overbought,
+path.oversold {
+    stroke: #FF9999;
+    stroke-dasharray: 5, 5;
+}
+
+path.middle,
+path.zero {
+    stroke: #BBBBBB;
+    stroke-dasharray: 5, 5;
+}
+
+.analysis path,
+.analysis circle {
+    stroke: blue;
+    stroke-width: 0.8;
+}
+
+.trendline circle {
+    stroke-width: 0;
+    display: none;
+}
+
+.mouseover .trendline path {
+    stroke-width: 1.2;
+}
+
+.mouseover .trendline circle {
+    stroke-width: 1;
+    display: inline;
+}
+
+.dragging .trendline path,
+.dragging .trendline circle {
+    stroke: darkblue;
+}
+
+.interaction path,
+.interaction circle {
+    pointer-events: all;
+}
+
+.interaction .body {
+    cursor: move;
+}
+
+.trendlines .interaction .start,
+.trendlines .interaction .end {
+    cursor: nwse-resize;
+}
+
+.supstance path {
+    stroke-dasharray: 2, 2;
+}
+
+.supstances .interaction path {
+    pointer-events: all;
+    cursor: ns-resize;
+}
+
+.mouseover .supstance path {
+    stroke-width: 1.5;
+}
+
+.dragging .supstance path {
+    stroke: darkblue;
+}
+
+.crosshair {
+    cursor: crosshair;
+}
+
+.crosshair path.wire {
+    stroke: #DDDDDD;
+    stroke-dasharray: 1, 1;
+}
+
+.crosshair .axisannotation path {
+    fill: #DDDDDD;
+}
+
+.grid .tick {
+    stroke: grey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}
+
+.vertical-center {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    /* align the inline(-block) elements horizontally */
+    font: 0/0 a;
+    /* remove the gap between inline(-block) elements */
+}
+
+.vertical-center:before {
+    /* create a full-height inline block pseudo=element */
+    content: " ";
+    display: inline-block;
+    vertical-align: middle;
+    /* vertical alignment of the inline element */
+    height: 100%;
+}
+
+.vertical-center>.container {
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    /* vertical alignment of the inline element */
+    /* reset the font property */
+    font: 16px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.axis text {
+    font-size: 10px;
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Chrome/Safari/Opera */
+    -khtml-user-select: none;
+    /* Konqueror */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    /* width: 90px;
+    height: 70px; */
+    padding: 2px;
+    font: 10px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+/* Axis Navigator */
+
+.navigator .data {
+    fill: lightgrey;
+    stroke-width: 0px;
+}
+
+.navigator .line {
+    fill: none;
+    stroke: darkgrey;
+    stroke-width: 1px;
+}
+
+.navigator .viewport {
+    stroke: grey;
+    fill: black;
+    fill-opacity: 0.2;
+}
+
+/* Trades */
+
+.trade_operation {
+    cursor: pointer;
+}
+
+.trade_operation.blink {
+    -webkit-animation: blink 1s;
+    -webkit-animation-iteration-count: 15;
+    -moz-animation: blink 1s;
+    -moz-animation-iteration-count: 15;
+    -o-animation: blink 1s;
+    -o-animation-iteration-count: 15;
+}
+
+.trade_operation[data-closed] {
+    cursor: default;
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Scroller */
+
+#scroll-x:hover {
+    cursor: ew-resize;
+}
+
+.track {
+    stroke: #000;
+    stroke-opacity: 0.3;
+    fill: #ddd;
+    cursor: pointer;
+}
+
+.handle {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+
+/* Marks */
+
+.mark {
+    opacity: .7;
+}
+
+.mark:hover {
+    opacity: 1;
+}
+
+.mark[state="off"] {
+    display: none;
+}
+
+#mark svg {
+    position: relative;
+    top: 3px;
+}
+
+.mark-rect {
+    stroke: black;
+    stroke-width: 0.5px;
+    fill: white;
+}
+
+.mark-text {
+    fill: blue;
+    font-size: 11px;
+}
+
+#mark text {
+    font-size: 9px;
+}
+
+.mark-all-text {
+    font-size: 8px;
+}
+
+.mark-all-rect {
+    stroke: transparent;
+    fill: transparent;
+}
+
+.markG {
+    cursor: pointer;
+}
+
+.markG:hover>rect {
+    stroke: black;
+    stroke-width: .5px;
+    fill: white;
+}
+
+.markG:hover>text {
+    fill: blue;
+}
+
+.markG.configuring>rect {
+    fill: blue !important;
+}
+
+.markG.configuring>text {
+    fill: white !important;
+}
+
+#mark_modal .modal-lg {
+    width: 80%;
+    min-width: 900px;
+}
+
+#mark-config {
+    padding: 10px;
+    background: #eaeaea;
+    border: 1px #ccc solid;
+}
+
+/* Operation Cancel Recommend */
+
+.trade_cancel_circle {
+    fill: white;
+    stroke: black;
+    stroke-width: 2;
+    cursor: pointer;
+}
+
+.trade_cancel_x {
+    stroke: red;
+    fill: transparent;
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+#operation_modal .input-group-addon {
+    width: initial;
+}

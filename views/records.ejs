@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Records</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script>
+        function deletePermanently(id) {
+            // var formData = new FormData();
+            var req = new XMLHttpRequest();
+            req.open('POST', '/eraseRecord', true);
+            req.setRequestHeader("Content-type", "application/json");
+            //formData.append('id', id);
+            req.send(JSON.stringify({
+                id: id
+            }));
+            console.log(id);
+        }
+
+        function toggleDetails(id) {
+            var element = document.getElementById('d' + id);
+            if (element) {
+                toggleClass(element, 'hidden');
+            }
+        }
+
+        function toggleClass(element, className) {
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            } else {
+                element.classList.add(className);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <% if (records && records.length > 0){ %>
+            <table class="table table-hover" style="width:50%;">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Minutes Count</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Toggle</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (var i = 0; i < records.length; i++){ %>
+                        <tr id=<%- '"' + i + '"'%>>
+                            <td>
+                                <%- records[i].date%>
+                            </td>
+                            <td>
+                                <%- records[i].length%>
+                            </td>
+                            <td>
+                                <%- records[i].min%>
+                            </td>
+                            <td>
+                                <%- records[i].max%>
+                            </td>
+                            <td class="btn-default" id=<%- '"t' + i.toString() + '"'%> onclick="toggleDetails(this.id)">Details</td>
+                            <td class="btn-default" id=<%- '"' + records[i]._id + '"'%> onclick="deletePermanently(this.id)">Delete Permanently</td>
+                        </tr>
+                        <tr>
+                            <hidden class="hidden" id=<%- 'dt' + i.toString()%>>
+                                <%-records[i].values.toString()%>
+                            </hidden>
+                        </tr>
+                        <%}%>
+                </tbody>
+            </table>
+            <%} else {%>
+                <p>No records.</p>
+                <%}%>
+    </div>
+</body>
+
+</html>

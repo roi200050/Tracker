@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+// initialize settings of server's process and the port it will be listening to
+// also calls for first initialization that will create a connection for DB
+
+if (!console || !console.log){
+    console = {log: function(){}};
+}
+var app = require('../app'),
+    debug = require('debug')('Tracker:server'),
+    http = require('http');
+    homeController = require('../controllers/homeController'),
+    recorder = require('./recorder'),
+    algorithmController = require('../controllers/algorithmController');
+	winston = require('winston');
+
+winston.add(winston.transports.File, {
+    filename: 'platform.log'
+});
+winston.remove(winston.transports.Console);
+	
+ homeController.init(app);
+ recorder.registerToNewCandleEvent(algorithmController.addCandleEventHandler);
+ recorder.startRecording(app.locals.scemas.dayScehma, app);
+
+var manualExecution = require('../executeAlgorithmByDateApp').manualExecution;
+//manualExecution('2017-09-06', 'eraseOldMarks');
+
+// Get port from environment and store in Express.
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+// Create HTTP server.
+var server = http.createServer(app);
+
+// Listen on provided port, on all network interfaces.
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
+
+/*process.on('uncaughtException', function(err) {
+	try {
+		console.log("[ERROR] Unhandled exception occured. " + err);
+		winston.info("[ERROR] Unhandled exception occured. " + err);
+	} catch (ex) {
+		console.log("[ERROR] Unhandled exception occured. in uncaughtExceptionFunction " + ex);
+	}
+});*/
+
+// Normalize a port into a number, string, or false.
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) // named pipe
+        return val;
+
+    if (port >= 0) // port number
+        return port;
+
+    return false;
+}
+
+// Event listener for HTTP server "error" event.
+// handle network errors
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+// Event listener for HTTP server "listening" event.
+function onListening() {
+    var addr = server.address(),
+        bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+}
+
+// clean before exit
+function gracefulExit() {
+    recorder.stopRecording();
+    recorder.cleanup();
+    sleep(1000);
+    homeController.cleanup();
+    process.exit(0);
+}
+
+// sleep without stopping the process
+function sleep(mil_seconds) {
+    var begin = new Date();
+    var end = new Date(begin.getTime() + mil_seconds);
+    while (end.getTime() > new Date().getTime()) {}
+}

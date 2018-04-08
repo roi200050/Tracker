@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <!-- 3rd party stylesheets -->
+    <link rel='stylesheet' href='javascripts/bootstrap/dist/css/bootstrap.css'>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='stylesheets/style.css'>
+
+    <!-- app stylesheets -->
+    <link rel='stylesheet' href='/stylesheets/graph.css'>
+
+    <!-- 3rd party libraries -->
+    <script src="javascripts/angular.min.js"></script>
+    <script src="javascripts/angular/app.js"></script>
+    <script src="javascripts/angular/controllers/ngHomeController.js"></script>
+    <script src="javascripts/angular/services/ngDataService.js"></script>
+    <script src="javascripts/d3.min.js"></script>
+    <script src="javascripts/ohlcHandler.js"></script>
+    <script src="javascripts/jquery/jquery.min.js"></script>
+    <script src="javascripts/jquery-ui/jquery-ui.min.js"></script>
+    <script src="javascripts/clock.js"></script>
+    <script src="javascripts/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="template/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="template/bower_components/raphael/raphael-min.js"></script>
+    <script src="template/dist/js/sb-admin-2.js"></script>
+
+    <!-- 3rd party stylesheets -->
+    <link href="template/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+    <link href="template/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        function toggleMenu() {
+            $('#menu').toggle();
+        }
+    </script>
+</head>
+
+<body ng-app="Tracker" ng-controller="HomeController">
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <label class="navbar-brand" href="/">Jovany Platform
+                    <button type="button" id="toggleMenu" class="btn btn-default" aria-label="ToggleMenu" onclick="toggleMenu()">
+                        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                    </button>
+                </label>
+            </div>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav in" id="side-menu">
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-bar-chart-o fa-fw"></i> Chart
+                                <span class="fa-arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li>
+                                    <a href="/">OHLC Graph</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="tables.html">
+                                <i class="fa fa-table fa-fw"></i> Table</a>
+                            <ul class="nav nav-second-level collapse">
+                                <li>
+                                    <a href="/Table" target="_blank">My Success</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                    </ul>
+                    <div style="margin-left: 15px" id="draggable_clock">
+                        <canvas id="canvas_clock" width="110" height="110"></canvas>
+                        <br/>
+                        <x id="digital_clock" class="clock" style="margin-left:16px">15:05:47</x>
+                    </div>
+                    <div class="draggable" style="margin-left: 30px" id="zoomY">
+                        <button type="button" id="decZoomY" class="btn btn-default" aria-label="+" onclick="changeYGap(-1)">
+                            <span class="glyphicon glyphicon-zoom-in btn-xs" aria-hidden="true"></span>Y
+                        </button>
+                        <br/>
+                        <img style="margin-left: 9px" src="images/yAxis.png" />
+                        <br/>
+                        <button type="button" id="incZoomY" class="btn btn-default" aria-label="-" onclick="changeYGap(1)">
+                            <span class="glyphicon glyphicon-zoom-out btn-xs" aria-hidden="true"></span>Y
+                        </button>
+                    </div>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+        <div id="page-wrapper" style="min-height: 323px;">
+            <!-- <div class="row">
+                    <div class="col-lg-12" style="margin-bottom: 10px;">
+                    </div>
+                </div> -->
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div>
+                                <div id="menu" class="btn-group navbar-form" style="width: 100%">
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="alerts-heading">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#alerts-table" href="#alerts-table" aria-expanded="false" aria-controls="alerts-table">
+                                                        Trade Alerts Table
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="alerts-table" class="panel-collapse collapse" role="tabpanel" aria-labelledby="alerts-heading">
+                                                <div class="panel-body">
+                                                    <table class="table table-hover table-condensed">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <input type="checkbox" onchange="toggleAllAlertsTable(this)">
+                                                                </th>
+                                                                <th>Trade SN</th>
+                                                                <th>Alert Date</th>
+                                                                <th>Alert Time</th>
+                                                                <th colspan="2">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="alert-table-body">
+                                                        </tbody>
+                                                    </table>
+                                                    <button class="btn btn-danger" onclick="cancelTableTrades()">Cancel Trades</button>
+                                                    <button class="btn btn-warning" onclick="dismissTableAlerts()">Dismiss Alerts</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="controls-heading">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#controls" href="#controls" aria-expanded="true" aria-controls="panel-body">
+                                                        Controls
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="controls" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="controls-heading">
+                                                <div class="panel-body">
+                                                    <span style="margin-right:1em">
+                                                        <button type="button" id="sell" class="btn btn-default form-control" aria-label="Sell">
+                                                            Sell
+                                                            <span class="glyphicon glyphicon-log-out btn-xs rotate_90"
+                                                                aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="buy" class="btn btn-default form-control" aria-label="Buy">
+                                                            Buy
+                                                            <span class="glyphicon glyphicon-log-out btn-xs rotate_270"
+                                                                aria-hidden="true"></span>
+                                                        </button>
+                                                        <input style="width:10%;" id="operation_end" class="form-control" type="number" value="0" min="0" placeholder="Minutes to Buy/Sell"
+                                                        />
+                                                        <button type="button" id="custom_sell" class="btn btn-default form-control" aria-label="Sell">
+                                                            Custom Sell
+                                                            <span class="glyphicon glyphicon-log-out btn-xs rotate_90"
+                                                                aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="custom_buy" class="btn btn-default form-control" aria-label="Buy">
+                                                            Custom Buy
+                                                            <span class="glyphicon glyphicon-log-out btn-xs rotate_270"
+                                                                aria-hidden="true"></span>
+                                                        </button>
+                                                    </span>
+                                                    <span style="margin-right:1em">
+                                                        <label class="form control">Replay</label>
+                                                        <select id="dateSeed" class="form-control">
+                                                            <span class="btn-xs">
+                                                            </span>
+                                                        </select>
+                                                        <input id="timeSeed" value="00:00" class="form-control" type="time" />
+                                                        <input id="timeSpeed" class="form-control" type="number" min="1" max="1000" placeholder="Speed x1" />
+                                                        <button onclick="loadSeedData(this)" type="button" class="btn btn-default" aria-label="play">
+                                                            <span id="btnPlay" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                                        </button>
+                                                    </span>
+                                                    <span>
+                                                        <button type="button" id="drawLine" class="btn btn-default form-control" aria-label="Megama">
+                                                            Draw
+                                                            <span class="glyphicon glyphicon-pencil btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="cross" class="btn btn-default" aria-label="Cross">
+                                                            Cross
+                                                            <span class="glyphicon glyphicon-screenshot btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="angle" class="btn btn-default" aria-label="Angle">
+                                                            Angle
+                                                            <span class="glyphicon glyphicon-menu-left btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="ruler" class="btn btn-default" aria-label="Ruler">
+                                                            Ruler
+                                                            <span class="glyphicon glyphicon-resize-full btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <span style="margin-left: 1em; margin-right:1em">
+                                                            <label class="form control">Mark</label>
+                                                            <select id="markSelector" ng-model="selectedMark" ng-change="changeMark()" ng-options="mark.label for mark in configuredMarks"
+                                                                class="form-control">
+                                                                <span class="btn-xs">
+                                                                </span>
+                                                            </select>
+                                                            <button type="button" id="mark" style="padding: 0" class="btn btn-default" ng-if="selectedMark" aria-label="Mark">
+                                                                <svg width="48" height="28" aria-hidden="true">
+                                                                    <circle class="mark-rect" cx="24" cy="14" r="12"></circle>
+                                                                    <!-- <circle class="mark-rect" cx="17" cy="12" r="15" width="35" height="15" ></circle> -->
+                                                                    <text class="mark-text" x="24" y="18" text-anchor="middle">{{selectedMark.label}}</text>
+                                                                </svg>
+                                                            </button>
+                                                            <button type="button" class="btn btn-default" data-toggle="modal" ng-click="openConfigModal()" data-target="#mark_modal">
+                                                                <span class="glyphicon glyphicon-cog btn-xs" aria-hidden="true"></span>
+                                                            </button>
+                                                        </span>
+                                                        <button type="button" class="btn btn-default" aria-label="Time">
+                                                            <x id="clock">15:05:47</x>
+                                                            <span ng-bind="Date.now()" class="glyphicon glyphicon-time btn-xs"
+                                                                aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="plus" class="btn btn-default" aria-label="+" onclick="decreaseDataWindow()">
+                                                            <span class="glyphicon glyphicon-zoom-in btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="minus" class="btn btn-default" aria-label="-" onclick="increaseDataWindow()">
+                                                            <span class="glyphicon glyphicon-zoom-out btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" id="resetOffsets" class="btn btn-default" aria-label="R" onclick="resetOffsets()">
+                                                            <span class="glyphicon glyphicon-registration-mark btn-xs" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button onclick="toggleStream(this)" type="button" class="btn btn-default" aria-label="play">
+                                                            <span id="btnStream" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button onclick="removeAllShapes()" type="button" class="btn btn-default" aria-label="remove all shapes">
+                                                            Clean
+                                                        </button>
+                                                        <button onclick="restartRecorder()" type="button" class="btn btn-default" aria-label="restart recorder">
+                                                            Restart Recorder
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="panel-heading" role="tab" id="controls-heading">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#alertControls" href="#alertControls" aria-expanded="true" aria-controls="panel-body">
+                                                        Alert Box
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="alertControls" class="panel-collapse collapse in scroll" role="tabpanel" aria-labelledby="controls-heading">
+                                                <span>
+                                                    <audio id="alertAudio">
+                                                        <source src="ring.ogg" type="audio/ogg">
+                                                        <source src="ring.mp3" type="audio/mpeg">
+                                                    </audio>
+                                                    <i class="fa fa-bell" aria-hidden="true" style="font-size:25px;color:red;" ng-show="isAlert"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div id="body" style="position: relative; top:30px;">
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper-->
+    </div>
+    <!-- /#wrapper-->
+
+    <div id="operation_modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 class="modal-title"></h3>
+                </div>
+                <div class="modal-body">
+                    <h4 class="modal-text"></h4>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" ng-model="operationCancelTimeoutEnabled" ng-change="toggleOperationCancelTimeout(this)"> Stop Later{{operationCancelTimeoutEnabled ? ': After': ''}}
+                        </span>
+                        <input id="cancelTradeMin" class="form-control" size="3" style="width: 70px" ng-model="operationCancelMin" min="0" max="120"
+                            type="number" ng-show="operationCancelTimeoutEnabled">
+                        <span class="input-group-addon" ng-show="operationCancelTimeoutEnabled">:</span>
+                        <input id="cancelTradeSec" class="form-control" size="2" style="width: 60px" ng-model="operationCancelSec" min="0" max="59"
+                            type="number" ng-show="operationCancelTimeoutEnabled">
+                        <span class="input-group-addon">(Minutes)</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <button onclick="removeOperationAlert(true)" type="button" class="btn btn-danger" data-dismiss="modal">Dismiss Alert</button>
+                    <button onclick="stopOperation(this)" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div id="mark_modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 class="modal-title">Marks Configuration</h3>
+                </div>
+                <div class="modal-footer" id="mark-config">
+                    <form class="row">
+                        <div class="form-group col-xs-8 col-xs-offset-2">
+                            <label class="sr-only" for="exampleInputAmount">Mark</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">{{configuringMark.label}}</div>
+                                <input type="text" class="form-control" id="mark-configuration-input" placeholder="Configuration" ng-change="changeConfiguration()"
+                                    ng-model="configuringMark.configuration">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="mark-body"></div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <button type="button" ng-disabled="noSave" ng-click="saveConfig()" aria-label="Save" class="btn btn-primary col-xs-4 col-xs-offset-4"
+                            style="margin-bottom: 10px">Save All Changes</button>
+                        <span></span>
+                        <button type="button" class="btn btn-default col-xs-2 col-xs-offset-5" data-dismiss="modal">Close{{ !noSave ? ' (Without Saving)' : ''}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- app scripts -->
+    <script src="javascripts/autoMarksManager.js"></script>
+    <script src="javascripts/operationHandler.js"></script>
+    <script src="javascripts/moving-average.js"></script>
+    <script src="javascripts/graphManager.js"></script>
+    <script src="javascripts/marks.js"></script>
+    <script>
+        $("#draggable_clock, .draggable").draggable();
+    </script>
+</body>
+
+</html>
